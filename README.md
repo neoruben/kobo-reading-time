@@ -4,7 +4,7 @@
 
 On the home-screen book card and in the library list, Kobo shows how much time is **left** to finish a book ("8 hours to go"). This patch makes it show how much time you have **already spent** reading it ("9h 39m read") instead. Kobo already records that time for every book; it just doesn't display it there.
 
-![Library list on a Kobo Clara BW with the patch installed](screenshot.png)
+<img src="screenshot.png" alt="Library list on a Kobo Clara BW with the patch installed" width="536">
 
 ## Compatibility
 
