@@ -38,7 +38,18 @@ Kobo's translations are stored compressed inside the binary, so the patch bypass
 
 To use your own wording, pass `--text "%0h %1m read" "%n min read"`, where `%0` is hours, `%1` is minutes, and `%n` is minutes when it's under one hour. The text does not change if you later switch the Kobo's language.
 
-## Usage
+## Windows app (no SSH)
+
+`kobo_gui.py` is a small window that does everything without SSH or the command line:
+
+1. Download `KoboReadingTime.exe` from [Releases](https://github.com/neoruben/kobo-reading-time/releases) (or run `python kobo_gui.py`), connect the Kobo over USB and open it. The `.exe` is not signed, so Windows SmartScreen may warn you: click *More info → Run anyway*.
+2. The app finds the Kobo and checks its model and firmware.
+3. Pick the text and click **Install patch**. The first time, the app downloads the official 4.46.23852 firmware from Kobo's servers (153 MB), takes the original `libnickel` from it, checks its MD5, and caches it in `%LOCALAPPDATA%\KoboReadingTime`. It then writes `.kobo\KoboRoot.tgz` to the Kobo.
+4. Eject and unplug the Kobo. It installs the patch and restarts.
+
+**Remove patch** installs the original `libnickel` the same way. To build the `.exe` yourself, run `pip install pyinstaller`, then `pyinstaller --onefile --windowed --name KoboReadingTime kobo_gui.py`.
+
+## Usage (command line)
 
 Requirements: Python 3.8+ and `pip install capstone pyelftools`.
 
@@ -58,7 +69,7 @@ and install that `KoboRoot.tgz` the same way.
 
 ## Status and caveats
 
-- Tested on a real Kobo Clara BW (4.46.23852) with `--lang es`. The other languages build and pass the same checks, but nobody has seen them on a device yet.
+- Tested on a real Kobo Clara BW (4.46.23852) with `--lang es`, both with the script and with the Windows app. The other languages build and pass the same checks, but nobody has seen them on a device yet.
 - The non-Spanish texts were not reviewed by native speakers, so corrections are welcome. Texts with non-ASCII characters have not been tested.
 - Audiobooks also show "read" time (time listened).
 - [reading-time-es.kobopatch.yaml](reading-time-es.kobopatch.yaml) describes the same changes (Spanish texts only) in kobopatch format. It has **not** been tested with kobopatch.
@@ -105,7 +116,18 @@ Las traducciones de Kobo van comprimidas dentro del programa, así que el parche
 
 Para poner tus propios textos, usa `--text "%0 h %1 min" "%n min"`, donde `%0` son las horas, `%1` los minutos y `%n` los minutos cuando es menos de una hora. El texto no cambia si después cambias el idioma del Kobo.
 
-## Uso
+## Uso en Windows (sin SSH)
+
+`kobo_gui.py` es una ventana que lo hace todo sin SSH ni línea de comandos:
+
+1. Descarga `KoboReadingTime.exe` desde [Releases](https://github.com/neoruben/kobo-reading-time/releases) (o ejecuta `python kobo_gui.py`), conecta el Kobo por USB y ábrelo. El `.exe` no está firmado, así que Windows SmartScreen puede avisar: pulsa *Más información → Ejecutar de todas formas*.
+2. La app encuentra el Kobo y comprueba el modelo y el firmware.
+3. Elige el texto y pulsa **Instalar parche**. La primera vez descarga el firmware oficial 4.46.23852 desde los servidores de Kobo (153 MB), saca de ahí el `libnickel` original, comprueba su MD5 y lo guarda en `%LOCALAPPDATA%\KoboReadingTime`. Después escribe `.kobo\KoboRoot.tgz` en el Kobo.
+4. Expulsa el Kobo y desconéctalo. Kobo instala el parche y se reinicia.
+
+**Quitar parche** instala el `libnickel` original de la misma forma. Para crear tú el `.exe`, ejecuta `pip install pyinstaller` y luego `pyinstaller --onefile --windowed --name KoboReadingTime kobo_gui.py`.
+
+## Uso (línea de comandos)
 
 Requisitos: Python 3.8+ y `pip install capstone pyelftools`.
 
@@ -125,7 +147,7 @@ Después instala ese `KoboRoot.tgz` de la misma forma.
 
 ## Estado y avisos
 
-- Probado en un Kobo Clara BW real (4.46.23852) con `--lang es`. Los demás idiomas se generan y pasan las mismas comprobaciones, pero nadie los ha visto todavía en un aparato.
+- Probado en un Kobo Clara BW real (4.46.23852) con `--lang es`, tanto con el script como con la app de Windows. Los demás idiomas se generan y pasan las mismas comprobaciones, pero nadie los ha visto todavía en un aparato.
 - Los textos que no están en español no los ha revisado ningún hablante nativo, así que se agradecen las correcciones. Los textos con caracteres no ASCII no se han probado.
 - Con audiolibros también muestra el tiempo «llevado» (tiempo escuchado).
 - [reading-time-es.kobopatch.yaml](reading-time-es.kobopatch.yaml) describe los mismos cambios (solo con los textos en español) en formato kobopatch. **No** se ha probado con kobopatch.

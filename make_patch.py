@@ -135,6 +135,17 @@ def patch(data, hm, mins, hours, verbose=True):
     return bytes(data)
 
 
+def make_tgz(out, path):
+    """Write `out` (libnickel bytes) into a KoboRoot.tgz at `path` and verify it."""
+    ti = tarfile.TarInfo(TAR_NAME)
+    ti.size, ti.mode, ti.uid, ti.gid, ti.uname, ti.gname = len(out), 0o775, 0, 0, 'root', 'root'
+    ti.mtime = int(time.time())
+    with tarfile.open(path, 'w:gz', format=tarfile.GNU_FORMAT) as t:
+        t.addfile(ti, io.BytesIO(out))
+    with tarfile.open(path) as t:
+        assert t.extractfile(TAR_NAME).read() == out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('libnickel', help='original libnickel.so.1.0.0 copied from the Kobo')
@@ -179,13 +190,7 @@ def main():
         open(a.out, 'wb').write(out)
         print('Wrote', a.out)
     if a.tgz:
-        ti = tarfile.TarInfo(TAR_NAME)
-        ti.size, ti.mode, ti.uid, ti.gid, ti.uname, ti.gname = len(out), 0o775, 0, 0, 'root', 'root'
-        ti.mtime = int(time.time())
-        with tarfile.open(a.tgz, 'w:gz', format=tarfile.GNU_FORMAT) as t:
-            t.addfile(ti, io.BytesIO(out))
-        with tarfile.open(a.tgz) as t:
-            assert t.extractfile(TAR_NAME).read() == out
+        make_tgz(out, a.tgz)
         print('Wrote', a.tgz, '(copy it to .kobo/KoboRoot.tgz on the Kobo and reboot)')
 
 
