@@ -1,0 +1,43 @@
+# Reading-time patch ("Llevas X h Y min") for libnickel.so.1.0.0
+# Firmware 4.46.23852 (Kobo Clara BW, kobo12). Do NOT use on other versions.
+# Original libnickel MD5: ff0d6f9cba0ff963a71cc98384089070
+# Patched libnickel MD5: ccda4872a8a97a16516fc4e4bbc7c230
+# kobopatch format, Spanish texts only. NOT tested with kobopatch; the
+# installed build was made with make_patch.py and has exactly the MD5 above.
+
+Reading time spent on home card and library list (Spanish):
+  - Enabled: no
+  - Description: |
+      Shows time spent reading (TimeSpentReading) instead of time left
+      (RestOfBookEstimate) on the home-screen card and in the library list,
+      as "Llevas %0 h %1 min" / "Llevas %n min". Other screens (stats,
+      in-book footer) are unchanged.
+  # 1) SingleBookHomeWidget::setContent: ldr.w r2,[r3,#0x170] -> #0x16c
+  - BaseAddress: 0xDA7516
+  - ReplaceBytes: {Offset: 0, FindH: D3 F8 70 21, ReplaceH: D3 F8 6C 21}
+  # 2) DragonListWidget::setContent: same change
+  - BaseAddress: 0xEB15CA
+  - ReplaceBytes: {Offset: 0, FindH: D3 F8 70 21, ReplaceH: D3 F8 6C 21}
+  # 2b) Always use the hours+minutes format (cbz r0 after isAudiobook -> nop)
+  - BaseAddress: 0xDA63D8
+  - ReplaceBytes: {Offset: 0, FindH: 70 B1, ReplaceH: 00 BF}
+  - BaseAddress: 0xEAEEFC
+  - ReplaceBytes: {Offset: 0, FindH: 70 B1, ReplaceH: 00 BF}
+  # 3) New texts in the padding at the end of segment 1:
+  #    "Llevas %n h" / "Llevas %n min" / "Llevas %0 h %1 min"
+  - BaseAddress: 0x166E130
+  - ReplaceBytes: {Offset: 0, FindH: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00, ReplaceH: 4C 6C 65 76 61 73 20 25 6E 20 68 00 4C 6C 65 76 61 73 20 25 6E 20 6D 69 6E 00 4C 6C 65 76 61 73 20 25 30 20 68 20 25 31 20 6D 69 6E 00}
+  # 4) Extend p_filesz / p_memsz of the first PT_LOAD (0x166E130 -> 0x166E15D)
+  - BaseAddress: 0x64
+  - ReplaceBytes: {Offset: 0, FindH: 30 E1 66 01 30 E1 66 01, ReplaceH: 5D E1 66 01 5D E1 66 01}
+  # 5) Point only readingTimeLeft at the new texts (literal pools)
+  - BaseAddress: 0xDA6550
+  - ReplaceBytes: {Offset: 0,  FindH: F8 DE 66 00, ReplaceH: 48 7D 8C 00}
+  - ReplaceBytes: {Offset: 8,  FindH: CA D2 63 00, ReplaceH: 2A 7D 8C 00}
+  - ReplaceBytes: {Offset: 16, FindH: C4 D2 63 00, ReplaceH: 08 7D 8C 00}
+  - ReplaceBytes: {Offset: 24, FindH: BE DE 66 00, ReplaceH: 00 7D 8C 00}
+  - BaseAddress: 0xEAF000
+  - ReplaceBytes: {Offset: 0,  FindH: D4 53 56 00, ReplaceH: 24 F2 7B 00}
+  - ReplaceBytes: {Offset: 8,  FindH: A6 47 53 00, ReplaceH: 06 F2 7B 00}
+  - ReplaceBytes: {Offset: 16, FindH: A0 47 53 00, ReplaceH: E4 F1 7B 00}
+  - ReplaceBytes: {Offset: 24, FindH: 9A 53 56 00, ReplaceH: DC F1 7B 00}

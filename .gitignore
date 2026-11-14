@@ -1,0 +1,6 @@
+# Private: device backups and Kobo binaries (never publish these)
+privado/
+*.tgz
+*.so
+*.so.*
+__pycache__/
