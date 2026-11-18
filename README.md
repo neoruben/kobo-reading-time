@@ -1,5 +1,11 @@
 # Kobo reading-time patch
 
+<p align="center">
+  <a href="https://ko-fi.com/neoruben" target="_blank">
+    <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support me on Ko-fi" height="38">
+  </a>
+</p>
+
 *[Versión en español más abajo](#español)*
 
 On the home-screen book card and in the library list, Kobo shows how much time is **left** to finish a book ("8 hours to go"). This patch makes it show how much time you have **already spent** reading it ("9h 39m read") instead. Kobo already records that time for every book; it just doesn't display it there.
